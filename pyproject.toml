@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oci-vault-key-audit"
+version = "0.1.0"
+description = "Offline review of OCI Vault key rotation and lifecycle on synthetic inventories"
+requires-python = ">=3.10"
+readme = "README.md"
+
+[project.scripts]
+vault-audit = "vault_audit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,29 @@
+{
+  "as_of": "2026-10-01",
+  "keys": [
+    {"name": "orders-db-key", "vault": "prod-vault", "algorithm": "AES", "protection": "HSM", "state": "ENABLED",
+     "created": "2025-12-01", "last_rotated": "2026-07-01", "auto_rotation_days": 90,
+     "versions": [{"id": "v3", "state": "ENABLED", "created": "2026-07-01"}, {"id": "v2", "state": "ENABLED", "created": "2026-04-01"}, {"id": "v1", "state": "ENABLED", "created": "2025-12-01"}],
+     "usage": [{"resource": "orders-autonomous-db", "kind": "database", "sensitivity": "high"}]},
+    {"name": "legacy-bucket-key", "vault": "prod-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "ENABLED",
+     "created": "2023-02-10",
+     "versions": [{"id": "v1", "state": "ENABLED", "created": "2023-02-10"}],
+     "usage": [{"resource": "customer-exports-bucket", "kind": "bucket", "sensitivity": "high"}]},
+    {"name": "logs-key", "vault": "prod-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "ENABLED",
+     "created": "2024-01-15", "last_rotated": "2025-06-01", "auto_rotation_days": 400,
+     "versions": [{"id": "v6", "state": "ENABLED", "created": "2025-06-01"}, {"id": "v5", "state": "ENABLED", "created": "2025-01-01"}, {"id": "v4", "state": "ENABLED", "created": "2024-10-01"}, {"id": "v3", "state": "ENABLED", "created": "2024-07-01"}, {"id": "v2", "state": "ENABLED", "created": "2024-04-01"}, {"id": "v1", "state": "ENABLED", "created": "2024-01-15"}],
+     "usage": [{"resource": "app-logs-bucket", "kind": "bucket"}]},
+    {"name": "signing-key", "vault": "prod-vault", "algorithm": "RSA", "protection": "HSM", "state": "ENABLED",
+     "created": "2026-03-01", "usage": [{"resource": "release-signing", "kind": "signing"}]},
+    {"name": "old-archive-key", "vault": "prod-vault", "algorithm": "AES", "protection": "HSM", "state": "DISABLED",
+     "created": "2022-05-01", "disabled_since": "2026-02-01", "usage": [{"resource": "archive-bucket", "kind": "bucket", "active": true}]},
+    {"name": "unused-test-key", "vault": "dev-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "DISABLED",
+     "created": "2025-01-01", "disabled_since": "2026-03-01"},
+    {"name": "decommissioned-key", "vault": "dev-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "PENDING_DELETION",
+     "created": "2024-06-01", "deletion_date": "2026-10-05", "usage": [{"resource": "old-volume-backup", "kind": "volume", "active": true}]},
+    {"name": "retired-key", "vault": "dev-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "PENDING_DELETION",
+     "created": "2024-06-01", "deletion_date": "2026-10-04"},
+    {"name": "fresh-key", "vault": "dev-vault", "algorithm": "AES", "protection": "SOFTWARE", "state": "ENABLED",
+     "created": "2026-09-01", "auto_rotation_days": 180, "usage": [{"resource": "scratch-bucket", "kind": "bucket"}]}
+  ]
+}
