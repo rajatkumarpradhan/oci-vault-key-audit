@@ -10,8 +10,15 @@ Offline review of OCI Vault key rotation and lifecycle from an exported key inve
 python -m pip install -e .
 vault-audit examples/synthetic.json --output report.json
 vault-audit examples/synthetic.json --max-age-days 180 --fail-on high   # exit code 2 on any high finding
+vault-import examples/synthetic_keys.csv --as-of 2026-10-01 --output inventory.json   # flat CSV to inventory JSON
 python -m unittest discover -s tests -v
 ```
+
+## CSV importer
+
+`vault-import` turns a flat CSV into the inventory JSON, so the audit can be tried without hand-writing JSON. Required columns: `name, vault, algorithm, protection, state, created, last_rotated`. Optional: `auto_rotation_days, disabled_since, deletion_date`. Header case and spaces are ignored. Leave `last_rotated` empty for a key that was never rotated. `--as-of YYYY-MM-DD` sets the date ages are measured from.
+
+Every row is validated with the same rules as the JSON loader. Malformed rows are all reported with their CSV row number (row 1 is the header) and nothing is written; the exit code is 1. A flat CSV carries no key versions or resource usage, so rules that depend on them (KM005 and the usage checks in KM006 to KM009) only see what the CSV has. The bundled `examples/synthetic_keys.csv` is synthetic.
 
 The input has `as_of` (the date ages are measured from, so results are reproducible) and a list of `keys`, each with vault, algorithm (AES, RSA, ECDSA), protection (HSM or SOFTWARE), state, created and last-rotated dates, an optional `auto_rotation_days` (AES only), key versions, and `usage` entries naming the resources that use the key and how sensitive they are.
 
@@ -41,7 +48,7 @@ Asymmetric keys are not flagged for missing auto-rotation, and an `auto_rotation
 
 ## Tests
 
-33 unit tests cover validation, every rule and its boundary (for example a key exactly 365 days old), the severity split on KM001, asymmetric keys not being flagged for auto-rotation, disabled versions not counted, and the CLI. Three of the nine example keys are deliberately healthy and the tests require zero findings for them. CI runs on Python 3.10, 3.11 and 3.12.
+53 unit tests cover validation, every rule and its boundary (for example a key exactly 365 days old), the severity split on KM001, asymmetric keys not being flagged for auto-rotation, disabled versions not counted, the CLI, and the CSV importer (malformed rows, duplicates, missing columns). Three of the nine example keys are deliberately healthy and the tests require zero findings for them. CI runs on Python 3.10, 3.11 and 3.12.
 
 ## License
 

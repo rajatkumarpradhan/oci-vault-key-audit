@@ -11,6 +11,7 @@ readme = "README.md"
 
 [project.scripts]
 vault-audit = "vault_audit.cli:main"
+vault-import = "vault_audit.importer:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

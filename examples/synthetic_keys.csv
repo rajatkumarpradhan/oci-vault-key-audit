@@ -1,0 +1,6 @@
+name,vault,algorithm,protection,state,created,last_rotated,auto_rotation_days,disabled_since,deletion_date
+orders-db-key,prod-vault,AES,HSM,ENABLED,2025-12-01,2026-07-01,90,,
+legacy-bucket-key,prod-vault,AES,SOFTWARE,ENABLED,2023-02-10,,,,
+signing-key,prod-vault,RSA,HSM,ENABLED,2026-03-01,2026-06-01,,,
+unused-test-key,dev-vault,AES,SOFTWARE,DISABLED,2025-01-01,,,2026-03-01,
+fresh-key,dev-vault,AES,SOFTWARE,ENABLED,2026-09-01,,180,,
