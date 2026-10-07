@@ -38,6 +38,18 @@ The input has `as_of` (the date ages are measured from, so results are reproduci
 
 Asymmetric keys are not flagged for missing auto-rotation, and an `auto_rotation_days` on one is rejected: that setting is only modelled for AES keys. Resources marked `"active": false` are ignored.
 
+## Policy file
+
+`--policy policy.json` sets different limits per vault or key-name prefix instead of one global value (see `examples/policy.json`):
+
+```
+{"default": {"max_age_days": 365},
+ "vaults": {"prod-vault": {"max_age_days": 180}},
+ "key_prefixes": {"orders-": {"max_age_days": 60}}}
+```
+
+Settable limits: `max_age_days`, `idle_disabled_days`, `max_old_versions`. Precedence, most specific first: longest matching key-name prefix, then vault, then `default`, then the CLI flags or built-in defaults. An entry overrides only the limits it names. Unknown sections or limits, non-integers and out-of-range values are rejected with exit code 1. Without `--policy` behaviour is unchanged. Findings report the limit that was actually applied.
+
 ## Limits
 
 - The defaults (365 day rotation limit, 90 day idle-disabled window, 3 older enabled versions, 7 day deletion warning) are this tool's assumptions, not Oracle requirements. Pass your own with `--max-age-days`, `--idle-disabled-days` and `--max-old-versions`. Check current Oracle documentation for what auto-rotation supports before relying on a number.
@@ -48,7 +60,7 @@ Asymmetric keys are not flagged for missing auto-rotation, and an `auto_rotation
 
 ## Tests
 
-53 unit tests cover validation, every rule and its boundary (for example a key exactly 365 days old), the severity split on KM001, asymmetric keys not being flagged for auto-rotation, disabled versions not counted, the CLI, and the CSV importer (malformed rows, duplicates, missing columns). Three of the nine example keys are deliberately healthy and the tests require zero findings for them. CI runs on Python 3.10, 3.11 and 3.12.
+69 unit tests cover validation, every rule and its boundary (for example a key exactly 365 days old), the severity split on KM001, asymmetric keys not being flagged for auto-rotation, disabled versions not counted, the CLI, the CSV importer (malformed rows, duplicates, missing columns), and the policy file (precedence, partial overrides, boundaries, bad input). Three of the nine example keys are deliberately healthy and the tests require zero findings for them. CI runs on Python 3.10, 3.11 and 3.12.
 
 ## License
 

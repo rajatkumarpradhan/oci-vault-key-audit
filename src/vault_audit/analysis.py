@@ -33,13 +33,16 @@ def _age(inv: Inventory, k: Key) -> int:
 
 def analyze(inv: Inventory, max_age_days: int = DEFAULT_MAX_AGE_DAYS,
             idle_days: int = DEFAULT_IDLE_DISABLED_DAYS,
-            max_old_versions: int = DEFAULT_MAX_OLD_ENABLED_VERSIONS) -> list[Finding]:
+            max_old_versions: int = DEFAULT_MAX_OLD_ENABLED_VERSIONS, policy=None) -> list[Finding]:
     out: list[Finding] = []
+    base = {"max_age_days": max_age_days, "idle_disabled_days": idle_days, "max_old_versions": max_old_versions}
 
     def add(rule, sev, k, msg, ev=None):
         out.append(Finding(rule, sev, k.name, k.vault, msg, ev or {}))
 
     for k in inv.keys:
+        lim = policy.limits_for(k, base) if policy else base
+        max_age_days, idle_days, max_old_versions = lim["max_age_days"], lim["idle_disabled_days"], lim["max_old_versions"]
         active_use = [u for u in k.usage if u.active]
         if k.state == "ENABLED":
             age = _age(inv, k)

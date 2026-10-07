@@ -5,6 +5,7 @@ import json
 import sys
 
 from . import analysis, model
+from .policy import Policy
 
 DISCLAIMER = ("Review priorities from a snapshot of a simplified inventory. Policy limits are configurable "
               "assumptions, not Oracle requirements. Not tested against a live tenancy.")
@@ -16,6 +17,7 @@ def main(argv=None) -> int:
     ap.add_argument("--max-age-days", type=int, default=analysis.DEFAULT_MAX_AGE_DAYS)
     ap.add_argument("--idle-disabled-days", type=int, default=analysis.DEFAULT_IDLE_DISABLED_DAYS)
     ap.add_argument("--max-old-versions", type=int, default=analysis.DEFAULT_MAX_OLD_ENABLED_VERSIONS)
+    ap.add_argument("--policy", help="JSON file with per-vault / per-key-prefix limits")
     ap.add_argument("--output")
     ap.add_argument("--fail-on", choices=["high", "medium", "low"])
     a = ap.parse_args(argv)
@@ -23,10 +25,11 @@ def main(argv=None) -> int:
         if a.max_age_days < 1 or a.idle_disabled_days < 1 or a.max_old_versions < 0:
             raise ValueError("limits must be positive")
         inv = model.load_file(a.inventory)
+        pol = Policy.load_file(a.policy) if a.policy else None
     except (OSError, json.JSONDecodeError, model.ModelError, ValueError, KeyError, TypeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
-    fs = analysis.analyze(inv, a.max_age_days, a.idle_disabled_days, a.max_old_versions)
+    fs = analysis.analyze(inv, a.max_age_days, a.idle_disabled_days, a.max_old_versions, pol)
     for f in fs:
         print(f"[{f.severity.upper():6}] {f.rule} {f.vault}/{f.key}: {f.message}")
     print(f"{len(fs)} finding(s) across {len(inv.keys)} key(s).")

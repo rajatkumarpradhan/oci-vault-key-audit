@@ -1,0 +1,5 @@
+{
+  "default": {"max_age_days": 365},
+  "vaults": {"prod-vault": {"max_age_days": 180}},
+  "key_prefixes": {"orders-": {"max_age_days": 60}, "scratch-": {"max_age_days": 730, "max_old_versions": 10}}
+}
